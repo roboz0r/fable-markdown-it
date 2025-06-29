@@ -94,8 +94,8 @@ type Array<'T> = System.Collections.Generic.IList<'T>
 /// });
 /// </code>
 /// </summary>
-[<ImportAll("markdown-it")>]
-let MarkdownIt: MarkdownItConstructor = jsNative
+[<ImportDefault("markdown-it")>]
+let markdownit: MarkdownItConstructor = jsNative
 
 [<AllowNullLiteral>]
 type IExports =
@@ -134,7 +134,7 @@ type Token =
     /// <summary>HTML attributes. Format: <c>[ [ name1, value1 ], [ name2, value2 ] ]</c></summary>
     abstract attrs: Array<string * string> option with get, set
     /// <summary>Source map info. Format: <c>[ line_begin, line_end ]</c></summary>
-    abstract map: float * float option with get, set
+    abstract map: int * int option with get, set
     /// <summary>
     /// Level change (number in {-1, 0, 1} set), where:
     ///
@@ -144,7 +144,7 @@ type Token =
     /// </summary>
     abstract nesting: MarkdownIt.Token.Nesting with get, set
     /// <summary>Nesting level, the same as <c>state.level</c></summary>
-    abstract level: float with get, set
+    abstract level: int with get, set
     /// An array of child nodes (inline and img tokens)
     abstract children: ResizeArray<Token> option with get, set
     /// In a case of self-closing tag (code, html, fence, etc.),
@@ -165,7 +165,7 @@ type Token =
     /// to hide paragraphs.
     abstract hidden: bool with get, set
     /// Search attribute index by name.
-    abstract attrIndex: name: string -> float
+    abstract attrIndex: name: string -> int
     /// <summary>Add <c>[ name, value ]</c> attribute to list. Init attrs if necessary</summary>
     abstract attrPush: attrData: string * string -> unit
     /// <summary>Set <c>name</c> attribute to <c>value</c>. Override old value if exists.</summary>
@@ -220,7 +220,7 @@ type Renderer =
     /// <param name="tokens">list of tokens</param>
     /// <param name="idx">token index to render</param>
     /// <param name="options">params of parser instance</param>
-    abstract renderToken: tokens: ResizeArray<Token> * idx: float * options: MarkdownIt.Options -> string
+    abstract renderToken: tokens: ResizeArray<Token> * idx: int * options: MarkdownIt.Options -> string
     /// <summary>The same as <see cref="Renderer.render" />, but for single token of <c>inline</c> type.</summary>
     /// <param name="tokens">list of block tokens to render</param>
     /// <param name="options">params of parser instance</param>
@@ -429,13 +429,13 @@ type StateBlock =
     abstract env: obj option with get, set
     abstract tokens: ResizeArray<Token> with get, set
     /// line begin offsets for fast jumps
-    abstract bMarks: ResizeArray<float> with get, set
+    abstract bMarks: ResizeArray<int> with get, set
     /// line end offsets for fast jumps
-    abstract eMarks: ResizeArray<float> with get, set
+    abstract eMarks: ResizeArray<int> with get, set
     /// offsets of the first non-space characters (tabs not expanded)
-    abstract tShift: ResizeArray<float> with get, set
+    abstract tShift: ResizeArray<int> with get, set
     /// indents for each line (tabs expanded)
-    abstract sCount: ResizeArray<float> with get, set
+    abstract sCount: ResizeArray<int> with get, set
     /// <summary>
     /// An amount of virtual spaces (tabs expanded) between beginning
     /// of each line (bMarks) and real beginning of that line.
@@ -447,37 +447,37 @@ type StateBlock =
     /// an initial tab length, e.g. bsCount=21 applied to string <c>\t123</c>
     /// means first tab should be expanded to 4-21%4 === 3 spaces.
     /// </summary>
-    abstract bsCount: ResizeArray<float> with get, set
+    abstract bsCount: ResizeArray<int> with get, set
     /// required block content indent (for example, if we are
     /// inside a list, it would be positioned after list marker)
-    abstract blkIndent: float with get, set
+    abstract blkIndent: int with get, set
     /// line index in src
-    abstract line: float with get, set
+    abstract line: int with get, set
     /// lines count
-    abstract lineMax: float with get, set
+    abstract lineMax: int with get, set
     /// loose/tight mode for lists
     abstract tight: bool with get, set
     /// indent of the current dd block (-1 if there isn't any)
-    abstract ddIndent: float with get, set
+    abstract ddIndent: int with get, set
     /// indent of the current list block (-1 if there isn't any)
-    abstract listIndent: float with get, set
+    abstract listIndent: int with get, set
     /// used in lists to determine if they interrupt a paragraph
     abstract parentType: MarkdownIt.StateBlock.ParentType with get, set
-    abstract level: float with get, set
+    abstract level: int with get, set
     /// Push new token to "stream".
     abstract push: ``type``: string * tag: string * nesting: MarkdownIt.Token.Nesting -> Token
-    abstract isEmpty: line: float -> bool
-    abstract skipEmptyLines: from: float -> float
+    abstract isEmpty: line: int -> bool
+    abstract skipEmptyLines: from: int -> int
     /// Skip spaces from given position.
-    abstract skipSpaces: pos: float -> float
+    abstract skipSpaces: pos: int -> int
     /// Skip spaces from given position in reverse.
-    abstract skipSpacesBack: pos: float * min: float -> float
+    abstract skipSpacesBack: pos: int * min: int -> int
     /// Skip char codes from given position
-    abstract skipChars: pos: float * code: float -> float
+    abstract skipChars: pos: int * code: int -> int
     /// Skip char codes reverse from given position - 1
-    abstract skipCharsBack: pos: float * code: float * min: float -> float
+    abstract skipCharsBack: pos: int * code: int * min: int -> int
     /// cut lines range from source.
-    abstract getLines: ``begin``: float * ``end``: float * indent: float * keepLastLF: bool -> string
+    abstract getLines: ``begin``: int * ``end``: int * indent: int * keepLastLF: bool -> string
     abstract Token: obj with get, set
 
 [<AllowNullLiteral>]
@@ -494,11 +494,11 @@ type StateInline =
     abstract md: MarkdownIt with get, set
     abstract tokens: ResizeArray<Token> with get, set
     abstract tokens_meta: Array<MarkdownIt.StateInline.TokenMeta option> with get, set
-    abstract pos: float with get, set
-    abstract posMax: float with get, set
-    abstract level: float with get, set
+    abstract pos: int with get, set
+    abstract posMax: int with get, set
+    abstract level: int with get, set
     abstract pending: string with get, set
-    abstract pendingLevel: float with get, set
+    abstract pendingLevel: int with get, set
     /// Stores { start: end } pairs. Useful for backtrack
     /// optimization of pairs parse (emphasis, strikes).
     abstract cache: obj option with get, set
@@ -515,7 +515,7 @@ type StateInline =
     /// </summary>
     /// <param name="start">position to scan from (it should point at a valid marker)</param>
     /// <param name="canSplitWord">determine if these markers can be found inside a word</param>
-    abstract scanDelims: start: float * canSplitWord: bool -> MarkdownIt.StateInline.Scanned
+    abstract scanDelims: start: int * canSplitWord: bool -> MarkdownIt.StateInline.Scanned
     abstract Token: obj with get, set
 
 [<AllowNullLiteral>]
@@ -545,7 +545,7 @@ type ParserBlock =
     /// <summary><see cref="Ruler" /> instance. Keep configuration of block rules.</summary>
     abstract ruler: Ruler<MarkdownIt.ParserBlock.RuleBlock> with get, set
     /// Generate tokens for input range
-    abstract tokenize: state: StateBlock * startLine: float * endLine: float -> unit
+    abstract tokenize: state: StateBlock * startLine: int * endLine: int -> unit
     /// <summary>Process input string and push block tokens into <c>outTokens</c></summary>
     abstract parse: str: string * md: MarkdownIt * env: obj option * outTokens: ResizeArray<Token> -> unit
     abstract State: obj with get, set
@@ -679,22 +679,22 @@ module MarkdownIt =
         abstract has: obj: obj option * key: KeyOfAny -> bool
         abstract unescapeMd: str: string -> string
         abstract unescapeAll: str: string -> string
-        abstract isValidEntityCode: c: float -> bool
-        abstract fromCodePoint: c: float -> string
+        abstract isValidEntityCode: c: int -> bool
+        abstract fromCodePoint: c: int -> string
         abstract escapeHtml: str: string -> string
         /// Remove element from array and put another array at those position.
         /// Useful for some operations with tokens
-        abstract arrayReplaceAt: src: ResizeArray<'T> * pos: float * newElements: ResizeArray<'T> -> ResizeArray<'T>
-        abstract isSpace: code: float -> bool
+        abstract arrayReplaceAt: src: ResizeArray<'T> * pos: int * newElements: ResizeArray<'T> -> ResizeArray<'T>
+        abstract isSpace: code: int -> bool
         /// Zs (unicode class) || [\t\f\v\r\n]
-        abstract isWhiteSpace: code: float -> bool
+        abstract isWhiteSpace: code: int -> bool
         /// <summary>
         /// Markdown ASCII punctuation characters.
         ///
         /// !, ", #, $, %, &amp;, ', (, ), *, +, ,, -, ., /, :, ;, &lt;, =, &gt;, ?,
         /// </summary>
         /// <seealso href="http://spec.commonmark.org/0.15/#ascii-punctuation-character" />
-        abstract isMdAsciiPunct: code: float -> bool
+        abstract isMdAsciiPunct: code: int -> bool
         /// Currently without astral characters support.
         abstract isPunctChar: ch: string -> bool
         abstract escapeRE: str: string -> string
@@ -704,7 +704,7 @@ module MarkdownIt =
     [<AllowNullLiteral>]
     type ParseLinkDestinationResult =
         abstract ok: bool with get, set
-        abstract pos: float with get, set
+        abstract pos: int with get, set
         abstract str: string with get, set
 
     [<AllowNullLiteral>]
@@ -714,19 +714,19 @@ module MarkdownIt =
         /// <summary>if <c>true</c>, this link can be continued on the next line</summary>
         abstract can_continue: bool with get, set
         /// <summary>if <c>ok</c>, it's the position of the first character after the closing marker</summary>
-        abstract pos: float with get, set
+        abstract pos: int with get, set
         /// <summary>if <c>ok</c>, it's the unescaped title</summary>
         abstract str: string with get, set
         /// expected closing marker character code
-        abstract marker: float with get, set
+        abstract marker: int with get, set
 
     [<AllowNullLiteral>]
     type Helpers =
-        abstract parseLinkLabel: state: StateInline * start: float * ?disableNested: bool -> float
-        abstract parseLinkDestination: str: string * start: float * max: float -> ParseLinkDestinationResult
+        abstract parseLinkLabel: state: StateInline * start: int * ?disableNested: bool -> int
+        abstract parseLinkDestination: str: string * start: int * max: int -> ParseLinkDestinationResult
 
         abstract parseLinkTitle:
-            str: string * start: float * max: float * ?prev_state: ParseLinkTitleResult -> ParseLinkTitleResult
+            str: string * start: int * max: int * ?prev_state: ParseLinkTitleResult -> ParseLinkTitleResult
 
     /// <summary>
     /// MarkdownIt provides named presets as a convenience to quickly
@@ -748,40 +748,54 @@ module MarkdownIt =
         | Zero
         | Commonmark
 
+    type HighlightOptions = delegate of str: string * lang: string * attrs: string -> string
+
     [<AllowNullLiteral>]
-    type Options =
+    [<Global>]
+    type Options
+        [<ParamObject; Emit("$0")>]
+        (
+            ?html: bool,
+            ?xhtmlOut: bool,
+            ?breaks: bool,
+            ?langPrefix: string,
+            ?linkify: bool,
+            ?typographer: bool,
+            ?quotes: U2<string, ResizeArray<string>>,
+            ?highlight: HighlightOptions
+        ) =
         /// <summary>
         /// Set <c>true</c> to enable HTML tags in source. Be careful!
         /// That's not safe! You may need external sanitizer to protect output from XSS.
         /// It's better to extend features via plugins, instead of enabling HTML.
         /// </summary>
         /// <default>false</default>
-        abstract html: bool option with get, set
+        member val html: bool option = jsNative with get, set
         /// <summary>
         /// Set <c>true</c> to add '/' when closing single tags
         /// (<c>&lt;br /&gt;</c>). This is needed only for full CommonMark compatibility. In real
         /// world you will need HTML output.
         /// </summary>
         /// <default>false</default>
-        abstract xhtmlOut: bool option with get, set
+        member val xhtmlOut: bool option = jsNative with get, set
         /// <summary>Set <c>true</c> to convert <c>\n</c> in paragraphs into <c>&lt;br&gt;</c>.</summary>
         /// <default>false</default>
-        abstract breaks: bool option with get, set
+        member val breaks: bool option = jsNative with get, set
         /// <summary>
         /// CSS language class prefix for fenced blocks.
         /// Can be useful for external highlighters.
         /// </summary>
         /// <default>'language-'</default>
-        abstract langPrefix: string option with get, set
+        member val langPrefix: string option = jsNative with get, set
         /// <summary>Set <c>true</c> to autoconvert URL-like text to links.</summary>
         /// <default>false</default>
-        abstract linkify: bool option with get, set
+        member val linkify: bool option = jsNative with get, set
         /// <summary>
         /// Set <c>true</c> to enable <see href="https://github.com/markdown-it/markdown-it/blob/master/lib/rules_core/replacements.js">some language-neutral replacement</see> +
         /// quotes beautification (smartquotes).
         /// </summary>
         /// <default>false</default>
-        abstract typographer: bool option with get, set
+        member val typographer: bool option = jsNative with get, set
         /// <summary>
         /// Double + single quotes replacement
         /// pairs, when typographer enabled and smartquotes on. For example, you can
@@ -789,7 +803,7 @@ module MarkdownIt =
         /// <c>['«\xA0', '\xA0»', '‹\xA0', '\xA0›']</c> for French (including nbsp).
         /// </summary>
         /// <default>'“”‘’'</default>
-        abstract quotes: U2<string, ResizeArray<string>> option with get, set
+        member val quotes: U2<string, ResizeArray<string>> option = jsNative with get, set
         /// <summary>
         /// Highlighter function for fenced code blocks.
         /// Highlighter <c>function (str, lang, attrs)</c> should return escaped HTML. It can
@@ -797,26 +811,28 @@ module MarkdownIt =
         /// externally. If result starts with &lt;pre... internal wrapper is skipped.
         /// </summary>
         /// <default>null</default>
-        abstract highlight: (string -> string -> string -> string) option with get, set
+        member val highlight: HighlightOptions option = jsNative with get, set
 
     type Token = Token_
 
     module Token =
-
+        /// Level change (number in {-1, 0, 1} set)
         [<RequireQualifiedAccess>]
         type Nesting =
-            | N1 = 1
-            | N0 = 0
+            /// Closing tag
+            | Closing = -1
+            /// Self-closing tag
+            | SelfClosing = 0
+            /// Opening tag
+            | Opening = 1
 
     type Renderer = Renderer_
 
     module Renderer =
 
-        [<AllowNullLiteral>]
         type RenderRule =
-            [<Emit("$0($1...)")>]
-            abstract Invoke:
-                tokens: ResizeArray<Token> * idx: float * options: Options * env: obj option * self: Renderer -> string
+            delegate of
+                tokens: ResizeArray<Token> * idx: int * options: Options * env: obj option * self: Renderer -> string
 
         [<AllowNullLiteral>]
         type RenderRuleRecord =
@@ -865,14 +881,14 @@ module MarkdownIt =
         type Scanned =
             abstract can_open: bool with get, set
             abstract can_close: bool with get, set
-            abstract length: float with get, set
+            abstract length: int with get, set
 
         [<AllowNullLiteral>]
         type Delimiter =
-            abstract marker: float with get, set
-            abstract length: float with get, set
-            abstract token: float with get, set
-            abstract ``end``: float with get, set
+            abstract marker: int with get, set
+            abstract length: int with get, set
+            abstract token: int with get, set
+            abstract ``end``: int with get, set
             abstract ``open``: bool with get, set
             abstract close: bool with get, set
 
@@ -884,50 +900,26 @@ module MarkdownIt =
 
     module Core =
 
-        [<AllowNullLiteral>]
-        type RuleCore =
-            [<Emit("$0($1...)")>]
-            abstract Invoke: state: StateCore -> unit
+        type RuleCore = delegate of state: StateCore -> unit
 
     type ParserBlock = ParserBlock_
 
     module ParserBlock =
 
-        [<AllowNullLiteral>]
-        type RuleBlock =
-            [<Emit("$0($1...)")>]
-            abstract Invoke: state: StateBlock * startLine: float * endLine: float * silent: bool -> bool
+        type RuleBlock = delegate of state: StateBlock * startLine: int * endLine: int * silent: bool -> bool
 
     type ParserInline = ParserInline_
 
     module ParserInline =
 
-        [<AllowNullLiteral>]
-        type RuleInline =
-            [<Emit("$0($1...)")>]
-            abstract Invoke: state: StateInline * silent: bool -> bool
+        type RuleInline = delegate of state: StateInline * silent: bool -> bool
 
-        [<AllowNullLiteral>]
-        type RuleInline2 =
-            [<Emit("$0($1...)")>]
-            abstract Invoke: state: StateInline -> bool
+        type RuleInline2 = delegate of state: StateInline -> bool
 
-    [<AllowNullLiteral>]
-    type PluginSimple =
-        [<Emit("$0($1...)")>]
-        abstract Invoke: md: MarkdownIt -> unit
-
-    type PluginWithOptions = PluginWithOptions<obj option>
-
-    [<AllowNullLiteral>]
-    type PluginWithOptions<'T> =
-        [<Emit("$0($1...)")>]
-        abstract Invoke: md: MarkdownIt * ?options: 'T -> unit
-
-    [<AllowNullLiteral>]
-    type PluginWithParams =
-        [<Emit("$0($1...)")>]
-        abstract Invoke: md: MarkdownIt * [<ParamArray>] ``params``: obj option[] -> unit
+    type PluginSimple = delegate of md: MarkdownIt -> unit
+    type PluginWithOptions<'T> = delegate of md: MarkdownIt * ?options: 'T -> unit
+    type PluginWithOptions = PluginWithOptions<obj>
+    type PluginWithParams = delegate of md: MarkdownIt * [<ParamArray>] ``params``: obj[] -> unit
 
 [<AllowNullLiteral>]
 type MarkdownItConstructor =
@@ -1178,7 +1170,7 @@ type MarkdownIt =
     /// </summary>
     abstract ``use``: plugin: MarkdownIt.PluginSimple -> MarkdownIt
     abstract ``use``: plugin: MarkdownIt.PluginWithOptions<'T> * ?options: 'T -> MarkdownIt
-    abstract ``use``: plugin: MarkdownIt.PluginWithParams * [<ParamArray>] ``params``: obj option[] -> MarkdownIt
+    abstract ``use``: plugin: MarkdownIt.PluginWithParams * [<ParamArray>] ``params``: obj[] -> MarkdownIt
     /// <summary>
     /// *internal*
     ///

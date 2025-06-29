@@ -16,10 +16,7 @@ type IExports =
     abstract Match: MatchStatic
     abstract LinkifyIt: LinkifyItStatic
 
-[<AllowNullLiteral>]
-type Validate =
-    [<Emit("$0($1...)")>]
-    abstract Invoke: text: string * pos: float * self: LinkifyIt -> U2<float, bool>
+type Validate = delegate of text: string * pos: int * self: LinkifyIt -> U2<int, bool>
 
 [<AllowNullLiteral>]
 type FullRule =
@@ -48,24 +45,25 @@ type SchemaRules =
     abstract Item: schema: string -> Rule with get, set
 
 [<AllowNullLiteral>]
-type Options =
+[<Global>]
+type Options [<ParamObject; Emit("$0")>] (?fuzzyLink: bool, ?fuzzyEmail: bool, ?fuzzyIP: bool) =
     /// <summary>recognize URL-s without <c>http(s):</c> prefix. Default <c>true</c>.</summary>
-    abstract fuzzyLink: bool option with get, set
+    member val fuzzyLink: bool option = jsNative with get, set
     /// <summary>
     /// allow IPs in fuzzy links above. Can conflict with some texts
     /// like version numbers. Default <c>false</c>.
     /// </summary>
-    abstract fuzzyIP: bool option with get, set
+    member val fuzzyIP: bool option = jsNative with get, set
     /// <summary>recognize emails without <c>mailto:</c> prefix. Default <c>true</c>.</summary>
-    abstract fuzzyEmail: bool option with get, set
+    member val fuzzyEmail: bool option = jsNative with get, set
 
 /// <summary>Match result. Single element of array, returned by <see cref="LinkifyIt.match" />.</summary>
 [<AllowNullLiteral>]
 type Match =
     /// First position of matched string.
-    abstract index: float with get, set
+    abstract index: int with get, set
     /// Next position after matched string.
-    abstract lastIndex: float with get, set
+    abstract lastIndex: int with get, set
     /// Matched string.
     abstract raw: string with get, set
     /// Prefix (protocol) for matched string.
@@ -79,7 +77,7 @@ type Match =
 [<AllowNullLiteral>]
 type MatchStatic =
     [<EmitConstructor>]
-    abstract Create: self: LinkifyIt * shift: float -> Match
+    abstract Create: self: LinkifyIt * shift: int -> Match
 
 [<AllowNullLiteral>]
 type LinkifyIt =
@@ -103,7 +101,7 @@ type LinkifyIt =
     /// <param name="text">text to scan</param>
     /// <param name="schema">rule (schema) name</param>
     /// <param name="pos">text offset to check from</param>
-    abstract testSchemaAt: text: string * schema: string * pos: float -> float
+    abstract testSchemaAt: text: string * schema: string * pos: int -> int
     /// <summary>
     /// Returns array of found link descriptions or <c>null</c> on fail. We strongly
     /// recommend to use <see cref="LinkifyIt.test" /> first, for best speed.
@@ -148,7 +146,22 @@ type LinkifyItStatic =
     /// - "fuzzy" links and emails (example.com, foo@bar.com).
     /// </summary>
     [<EmitConstructor>]
-    abstract Create: ?schemas: U2<SchemaRules, Options> * ?options: Options -> LinkifyIt
+    abstract Create: ?schemas: SchemaRules * ?options: Options -> LinkifyIt
+
+    /// <summary>
+    /// new LinkifyIt(schemas, options)
+    /// - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
+    ///
+    /// Creates new linkifier instance with optional additional schemas.
+    /// Can be called without <c>new</c> keyword for convenience.
+    ///
+    /// By default understands:
+    ///
+    /// - <c>http(s)://...</c> , <c>ftp://...</c>, <c>mailto:...</c> &amp; <c>//...</c> links
+    /// - "fuzzy" links and emails (example.com, foo@bar.com).
+    /// </summary>
+    [<EmitConstructor>]
+    abstract Create: ?options: Options -> LinkifyIt
 
 [<AllowNullLiteral>]
 type LinkifyItRe =
