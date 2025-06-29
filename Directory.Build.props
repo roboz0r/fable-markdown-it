@@ -1,0 +1,29 @@
+<Project>
+	<PropertyGroup>
+		<RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+	</PropertyGroup>
+	<PropertyGroup>
+    <Authors>Robert Lenders</Authors>
+    <Copyright>Copyright (c) Robert Lenders 2025</Copyright>
+    <PackageVersion>0.1.0</PackageVersion>
+    <RepositoryUrl>https://github.com/roboz0r/fable-markdown-it</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/roboz0r/fable-markdown-it</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+	<PropertyGroup Label="F# Specific Options" Condition="'$(MSBuildProjectExtension)' == '.fsproj'">
+		<DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+	</PropertyGroup>
+    <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <WarningsAsErrors />
+		<!-- NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json. -->
+		<NoWarn>$(NoWarn);NU1900</NoWarn>
+    </PropertyGroup>
+	<ItemGroup>
+		<None Include="$(RepoRoot)LICENSE" Pack="true" Visible="true" PackagePath="" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="$(RepoRoot)README.md" Pack="true" Visible="true" PackagePath="" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Fable.Core" Version="4.5.0" />
+    <PackageVersion Include="Fable.Package.SDK" Version="1.3.2" />
+  </ItemGroup>
+</Project>
