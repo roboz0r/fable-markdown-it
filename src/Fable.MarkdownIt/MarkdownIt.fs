@@ -182,8 +182,6 @@ type TokenStatic =
     [<EmitConstructor>]
     abstract Create: ``type``: string * tag: string * nesting: MarkdownIt.Token.Nesting -> Token
 
-type Token_ = Token
-
 [<AllowNullLiteral>]
 type Renderer =
     /// <summary>
@@ -249,8 +247,6 @@ type RendererStatic =
     /// <summary>Creates new <see cref="Renderer" /> instance and fill <see cref="Renderer.rules" /> with defaults.</summary>
     [<EmitConstructor>]
     abstract Create: unit -> Renderer
-
-type Renderer_ = Renderer
 
 /// <summary>
 /// Helper class, used by <see cref="MarkdownIt.core" />, <see cref="MarkdownIt.block" /> and
@@ -402,8 +398,6 @@ type RulerStatic =
     [<EmitConstructor>]
     abstract Create: unit -> Ruler<'T>
 
-type Ruler_<'T> = Ruler<'T>
-
 [<AllowNullLiteral>]
 type StateCore =
     abstract src: string with get, set
@@ -418,8 +412,6 @@ type StateCore =
 type StateCoreStatic =
     [<EmitConstructor>]
     abstract Create: src: string * md: MarkdownIt * env: obj option -> StateCore
-
-type StateCore_ = StateCore
 
 [<AllowNullLiteral>]
 type StateBlock =
@@ -485,8 +477,6 @@ type StateBlockStatic =
     [<EmitConstructor>]
     abstract Create: src: string * md: MarkdownIt * env: obj option * tokens: ResizeArray<Token> -> StateBlock
 
-type StateBlock_ = StateBlock
-
 [<AllowNullLiteral>]
 type StateInline =
     abstract src: string with get, set
@@ -538,8 +528,6 @@ type CoreStatic =
     [<EmitConstructor>]
     abstract Create: unit -> Core
 
-type Core_ = Core
-
 [<AllowNullLiteral>]
 type ParserBlock =
     /// <summary><see cref="Ruler" /> instance. Keep configuration of block rules.</summary>
@@ -554,8 +542,6 @@ type ParserBlock =
 type ParserBlockStatic =
     [<EmitConstructor>]
     abstract Create: unit -> ParserBlock
-
-type ParserBlock_ = ParserBlock
 
 [<AllowNullLiteral>]
 type ParserInline =
@@ -582,92 +568,7 @@ type ParserInlineStatic =
     [<EmitConstructor>]
     abstract Create: unit -> ParserInline
 
-type ParserInline_ = ParserInline
-
-/// <summary>
-/// Main parser/renderer class.
-///
-/// ##### Usage
-///
-/// <code lang="javascript">
-/// // node.js, "classic" way:
-/// var MarkdownIt = require('markdown-it'),
-///     md = new MarkdownIt();
-/// var result = md.render('# markdown-it rulezz!');
-///
-/// // node.js, the same, but with sugar:
-/// var md = require('markdown-it')();
-/// var result = md.render('# markdown-it rulezz!');
-///
-/// // browser without AMD, added to "window" on script load
-/// // Note, there are no dash.
-/// var md = window.markdownit();
-/// var result = md.render('# markdown-it rulezz!');
-/// </code>
-///
-/// Single line rendering, without paragraph wrap:
-///
-/// <code lang="javascript">
-/// var md = require('markdown-it')();
-/// var result = md.renderInline('__markdown-it__ rulezz!');
-/// </code>
-///
-/// ##### Example
-///
-/// <code lang="javascript">
-/// // commonmark mode
-/// var md = require('markdown-it')('commonmark');
-///
-/// // default mode
-/// var md = require('markdown-it')();
-///
-/// // enable everything
-/// var md = require('markdown-it')({
-///   html: true,
-///   linkify: true,
-///   typographer: true
-/// });
-/// </code>
-///
-/// ##### Syntax highlighting
-///
-/// <code lang="js">
-/// var hljs = require('highlight.js') // https://highlightjs.org/
-///
-/// var md = require('markdown-it')({
-///   highlight: function (str, lang) {
-///     if (lang &amp;&amp; hljs.getLanguage(lang)) {
-///       try {
-///         return hljs.highlight(lang, str, true).value;
-///       } catch (__) {}
-///     }
-///
-///     return ''; // use external default escaping
-///   }
-/// });
-/// </code>
-///
-/// Or with full wrapper override (if you need assign class to <c>&lt;pre&gt;</c>):
-///
-/// <code lang="javascript">
-/// var hljs = require('highlight.js') // https://highlightjs.org/
-///
-/// // Actual default values
-/// var md = require('markdown-it')({
-///   highlight: function (str, lang) {
-///     if (lang &amp;&amp; hljs.getLanguage(lang)) {
-///       try {
-///         return '&lt;pre class="hljs"&gt;&lt;code&gt;' +
-///                hljs.highlight(lang, str, true).value +
-///                '&lt;/code&gt;&lt;/pre&gt;';
-///       } catch (__) {}
-///     }
-///
-///     return '&lt;pre class="hljs"&gt;&lt;code&gt;' + md.utils.escapeHtml(str) + '&lt;/code&gt;&lt;/pre&gt;';
-///   }
-/// });
-/// </code>
-/// </summary>
+[<AutoOpen>]
 module MarkdownIt =
 
     [<AllowNullLiteral>]
@@ -813,8 +714,6 @@ module MarkdownIt =
         /// <default>null</default>
         member val highlight: HighlightOptions option = jsNative with get, set
 
-    type Token = Token_
-
     module Token =
         /// Level change (number in {-1, 0, 1} set)
         [<RequireQualifiedAccess>]
@@ -825,8 +724,6 @@ module MarkdownIt =
             | SelfClosing = 0
             /// Opening tag
             | Opening = 1
-
-    type Renderer = Renderer_
 
     module Renderer =
 
@@ -849,18 +746,12 @@ module MarkdownIt =
             abstract html_block: RenderRule option with get, set
             abstract html_inline: RenderRule option with get, set
 
-    type Ruler<'T> = Ruler_<'T>
-
     module Ruler =
 
         [<AllowNullLiteral>]
         type RuleOptions =
             /// array with names of "alternate" chains.
             abstract alt: ResizeArray<string> with get, set
-
-    type StateCore = StateCore_
-
-    type StateBlock = StateBlock_
 
     module StateBlock =
 
@@ -872,8 +763,6 @@ module MarkdownIt =
             | Root
             | Paragraph
             | Reference
-
-    type StateInline = StateInline_
 
     module StateInline =
 
@@ -907,8 +796,6 @@ module MarkdownIt =
     module ParserBlock =
 
         type RuleBlock = delegate of state: StateBlock * startLine: int * endLine: int * silent: bool -> bool
-
-    type ParserInline = ParserInline_
 
     module ParserInline =
 
