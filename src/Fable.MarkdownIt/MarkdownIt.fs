@@ -146,7 +146,7 @@ type Token =
     /// <summary>Nesting level, the same as <c>state.level</c></summary>
     abstract level: int with get, set
     /// An array of child nodes (inline and img tokens)
-    abstract children: ResizeArray<Token> option with get, set
+    abstract children: array<Token> option with get, set
     /// In a case of self-closing tag (code, html, fence, etc.),
     /// it has contents of this tag.
     abstract content: string with get, set
@@ -218,12 +218,12 @@ type Renderer =
     /// <param name="tokens">list of tokens</param>
     /// <param name="idx">token index to render</param>
     /// <param name="options">params of parser instance</param>
-    abstract renderToken: tokens: ResizeArray<Token> * idx: int * options: MarkdownIt.Options -> string
+    abstract renderToken: tokens: array<Token> * idx: int * options: MarkdownIt.Options -> string
     /// <summary>The same as <see cref="Renderer.render" />, but for single token of <c>inline</c> type.</summary>
     /// <param name="tokens">list of block tokens to render</param>
     /// <param name="options">params of parser instance</param>
     /// <param name="env">additional data from parsed input (references, for example)</param>
-    abstract renderInline: tokens: ResizeArray<Token> * options: MarkdownIt.Options * env: obj option -> string
+    abstract renderInline: tokens: array<Token> * options: MarkdownIt.Options * env: obj option -> string
     /// <summary>
     /// Special kludge for image <c>alt</c> attributes to conform CommonMark spec.
     /// Don't try to use it! Spec requires to show <c>alt</c> content with stripped markup,
@@ -232,7 +232,7 @@ type Renderer =
     /// <param name="tokens">list of block tokens to render</param>
     /// <param name="options">params of parser instance</param>
     /// <param name="env">additional data from parsed input (references, for example)</param>
-    abstract renderInlineAsText: tokens: ResizeArray<Token> * options: MarkdownIt.Options * env: obj option -> string
+    abstract renderInlineAsText: tokens: array<Token> * options: MarkdownIt.Options * env: obj option -> string
     /// <summary>
     /// Takes token stream and generates HTML. Probably, you will never need to call
     /// this method directly.
@@ -240,7 +240,7 @@ type Renderer =
     /// <param name="tokens">list of block tokens to render</param>
     /// <param name="options">params of parser instance</param>
     /// <param name="env">additional data from parsed input (references, for example)</param>
-    abstract render: tokens: ResizeArray<Token> * options: MarkdownIt.Options * env: obj option -> string
+    abstract render: tokens: array<Token> * options: MarkdownIt.Options * env: obj option -> string
 
 [<AllowNullLiteral>]
 type RendererStatic =
@@ -350,7 +350,7 @@ type Ruler<'T> =
     /// <seealso cref="Ruler.disable">, <see cref="Ruler.enableOnly" /></seealso>
     /// <param name="list">list of rule names to enable.</param>
     /// <param name="ignoreInvalid">set <c>true</c> to ignore errors when rule not found.</param>
-    abstract enable: list: U2<string, ResizeArray<string>> * ?ignoreInvalid: bool -> ResizeArray<string>
+    abstract enable: list: U2<string, array<string>> * ?ignoreInvalid: bool -> array<string>
     /// <summary>
     /// Enable rules with given names, and disable everything else. If any rule name
     /// not found - throw Error. Errors can be disabled by second param.
@@ -358,7 +358,7 @@ type Ruler<'T> =
     /// <seealso cref="Ruler.disable">, <see cref="Ruler.enable" /></seealso>
     /// <param name="list">list of rule names to enable (whitelist).</param>
     /// <param name="ignoreInvalid">set <c>true</c> to ignore errors when rule not found.</param>
-    abstract enableOnly: list: U2<string, ResizeArray<string>> * ?ignoreInvalid: bool -> unit
+    abstract enableOnly: list: U2<string, array<string>> * ?ignoreInvalid: bool -> unit
     /// <summary>
     /// Disable rules with given names. If any rule name not found - throw Error.
     /// Errors can be disabled by second param.
@@ -368,7 +368,7 @@ type Ruler<'T> =
     /// <seealso cref="Ruler.enable">, <see cref="Ruler.enableOnly" /></seealso>
     /// <param name="list">list of rule names to disable.</param>
     /// <param name="ignoreInvalid">set <c>true</c> to ignore errors when rule not found.</param>
-    abstract disable: list: U2<string, ResizeArray<string>> * ?ignoreInvalid: bool -> ResizeArray<string>
+    abstract disable: list: U2<string, array<string>> * ?ignoreInvalid: bool -> array<string>
     /// <summary>
     /// Return array of active functions (rules) for given chain name. It analyzes
     /// rules configuration, compiles caches if not exists and returns result.
@@ -376,7 +376,7 @@ type Ruler<'T> =
     /// Default chain name is <c>''</c> (empty string). It can't be skipped. That's
     /// done intentionally, to keep signature monomorphic for high speed.
     /// </summary>
-    abstract getRules: chainName: string -> ResizeArray<'T>
+    abstract getRules: chainName: string -> array<'T>
 
 /// <summary>
 /// Helper class, used by <see cref="MarkdownIt.core" />, <see cref="MarkdownIt.block" /> and
@@ -402,7 +402,7 @@ type RulerStatic =
 type StateCore =
     abstract src: string with get, set
     abstract env: obj option with get, set
-    abstract tokens: ResizeArray<Token> with get, set
+    abstract tokens: array<Token> with get, set
     abstract inlineMode: bool with get, set
     /// link to parser instance
     abstract md: MarkdownIt with get, set
@@ -419,15 +419,15 @@ type StateBlock =
     /// link to parser instance
     abstract md: MarkdownIt with get, set
     abstract env: obj option with get, set
-    abstract tokens: ResizeArray<Token> with get, set
+    abstract tokens: array<Token> with get, set
     /// line begin offsets for fast jumps
-    abstract bMarks: ResizeArray<int> with get, set
+    abstract bMarks: array<int> with get, set
     /// line end offsets for fast jumps
-    abstract eMarks: ResizeArray<int> with get, set
+    abstract eMarks: array<int> with get, set
     /// offsets of the first non-space characters (tabs not expanded)
-    abstract tShift: ResizeArray<int> with get, set
+    abstract tShift: array<int> with get, set
     /// indents for each line (tabs expanded)
-    abstract sCount: ResizeArray<int> with get, set
+    abstract sCount: array<int> with get, set
     /// <summary>
     /// An amount of virtual spaces (tabs expanded) between beginning
     /// of each line (bMarks) and real beginning of that line.
@@ -439,7 +439,7 @@ type StateBlock =
     /// an initial tab length, e.g. bsCount=21 applied to string <c>\t123</c>
     /// means first tab should be expanded to 4-21%4 === 3 spaces.
     /// </summary>
-    abstract bsCount: ResizeArray<int> with get, set
+    abstract bsCount: array<int> with get, set
     /// required block content indent (for example, if we are
     /// inside a list, it would be positioned after list marker)
     abstract blkIndent: int with get, set
@@ -475,14 +475,14 @@ type StateBlock =
 [<AllowNullLiteral>]
 type StateBlockStatic =
     [<EmitConstructor>]
-    abstract Create: src: string * md: MarkdownIt * env: obj option * tokens: ResizeArray<Token> -> StateBlock
+    abstract Create: src: string * md: MarkdownIt * env: obj option * tokens: array<Token> -> StateBlock
 
 [<AllowNullLiteral>]
 type StateInline =
     abstract src: string with get, set
     abstract env: obj option with get, set
     abstract md: MarkdownIt with get, set
-    abstract tokens: ResizeArray<Token> with get, set
+    abstract tokens: array<Token> with get, set
     abstract tokens_meta: Array<MarkdownIt.StateInline.TokenMeta option> with get, set
     abstract pos: int with get, set
     abstract posMax: int with get, set
@@ -493,7 +493,7 @@ type StateInline =
     /// optimization of pairs parse (emphasis, strikes).
     abstract cache: obj option with get, set
     /// List of emphasis-like delimiters for current tag
-    abstract delimiters: ResizeArray<MarkdownIt.StateInline.Delimiter> with get, set
+    abstract delimiters: array<MarkdownIt.StateInline.Delimiter> with get, set
     /// Flush pending text
     abstract pushPending: unit -> Token
     /// Push new token to "stream".
@@ -511,7 +511,7 @@ type StateInline =
 [<AllowNullLiteral>]
 type StateInlineStatic =
     [<EmitConstructor>]
-    abstract Create: src: string * md: MarkdownIt * env: obj option * outTokens: ResizeArray<Token> -> StateInline
+    abstract Create: src: string * md: MarkdownIt * env: obj option * outTokens: array<Token> -> StateInline
 
 type StateInline_ = StateInline
 
@@ -535,7 +535,7 @@ type ParserBlock =
     /// Generate tokens for input range
     abstract tokenize: state: StateBlock * startLine: int * endLine: int -> unit
     /// <summary>Process input string and push block tokens into <c>outTokens</c></summary>
-    abstract parse: str: string * md: MarkdownIt * env: obj option * outTokens: ResizeArray<Token> -> unit
+    abstract parse: str: string * md: MarkdownIt * env: obj option * outTokens: array<Token> -> unit
     abstract State: obj with get, set
 
 [<AllowNullLiteral>]
@@ -560,7 +560,7 @@ type ParserInline =
     /// Generate tokens for input range
     abstract tokenize: state: StateInline -> unit
     /// <summary>Process input string and push inline tokens into <c>outTokens</c></summary>
-    abstract parse: str: string * md: MarkdownIt * env: obj option * outTokens: ResizeArray<Token> -> unit
+    abstract parse: str: string * md: MarkdownIt * env: obj option * outTokens: array<Token> -> unit
     abstract State: obj with get, set
 
 [<AllowNullLiteral>]
@@ -585,7 +585,7 @@ module MarkdownIt =
         abstract escapeHtml: str: string -> string
         /// Remove element from array and put another array at those position.
         /// Useful for some operations with tokens
-        abstract arrayReplaceAt: src: ResizeArray<'T> * pos: int * newElements: ResizeArray<'T> -> ResizeArray<'T>
+        abstract arrayReplaceAt: src: array<'T> * pos: int * newElements: array<'T> -> array<'T>
         abstract isSpace: code: int -> bool
         /// Zs (unicode class) || [\t\f\v\r\n]
         abstract isWhiteSpace: code: int -> bool
@@ -662,7 +662,7 @@ module MarkdownIt =
             ?langPrefix: string,
             ?linkify: bool,
             ?typographer: bool,
-            ?quotes: U2<string, ResizeArray<string>>,
+            ?quotes: U2<string, array<string>>,
             ?highlight: HighlightOptions
         ) =
         /// <summary>
@@ -704,7 +704,7 @@ module MarkdownIt =
         /// <c>['«\xA0', '\xA0»', '‹\xA0', '\xA0›']</c> for French (including nbsp).
         /// </summary>
         /// <default>'“”‘’'</default>
-        member val quotes: U2<string, ResizeArray<string>> option = jsNative with get, set
+        member val quotes: U2<string, array<string>> option = jsNative with get, set
         /// <summary>
         /// Highlighter function for fenced code blocks.
         /// Highlighter <c>function (str, lang, attrs)</c> should return escaped HTML. It can
@@ -728,8 +728,7 @@ module MarkdownIt =
     module Renderer =
 
         type RenderRule =
-            delegate of
-                tokens: ResizeArray<Token> * idx: int * options: Options * env: obj option * self: Renderer -> string
+            delegate of tokens: array<Token> * idx: int * options: Options * env: obj option * self: Renderer -> string
 
         [<AllowNullLiteral>]
         type RenderRuleRecord =
@@ -751,7 +750,7 @@ module MarkdownIt =
         [<AllowNullLiteral>]
         type RuleOptions =
             /// array with names of "alternate" chains.
-            abstract alt: ResizeArray<string> with get, set
+            abstract alt: array<string> with get, set
 
     module StateBlock =
 
@@ -783,7 +782,7 @@ module MarkdownIt =
 
         [<AllowNullLiteral>]
         type TokenMeta =
-            abstract delimiters: ResizeArray<Delimiter> with get, set
+            abstract delimiters: array<Delimiter> with get, set
 
     type Core = Core_
 
@@ -1030,7 +1029,7 @@ type MarkdownIt =
     /// </summary>
     /// <param name="list">rule name or list of rule names to enable</param>
     /// <param name="ignoreInvalid">set <c>true</c> to ignore errors when rule not found.</param>
-    abstract enable: list: U2<string, ResizeArray<string>> * ?ignoreInvalid: bool -> MarkdownIt
+    abstract enable: list: U2<string, array<string>> * ?ignoreInvalid: bool -> MarkdownIt
     /// <summary>
     /// *chainable*
     ///
@@ -1038,7 +1037,7 @@ type MarkdownIt =
     /// </summary>
     /// <param name="list">rule name or list of rule names to disable.</param>
     /// <param name="ignoreInvalid">set <c>true</c> to ignore errors when rule not found.</param>
-    abstract disable: list: U2<string, ResizeArray<string>> * ?ignoreInvalid: bool -> MarkdownIt
+    abstract disable: list: U2<string, array<string>> * ?ignoreInvalid: bool -> MarkdownIt
     /// <summary>
     /// *chainable*
     ///
@@ -1073,7 +1072,7 @@ type MarkdownIt =
     /// </summary>
     /// <param name="src">source string</param>
     /// <param name="env">environment sandbox</param>
-    abstract parse: src: string * env: obj option -> ResizeArray<Token>
+    abstract parse: src: string * env: obj option -> array<Token>
     /// <summary>
     /// Render markdown string into html. It does all magic for you :).
     ///
@@ -1093,7 +1092,7 @@ type MarkdownIt =
     /// </summary>
     /// <param name="src">source string</param>
     /// <param name="env">environment sandbox</param>
-    abstract parseInline: src: string * env: obj option -> ResizeArray<Token>
+    abstract parseInline: src: string * env: obj option -> array<Token>
     /// <summary>
     /// Similar to <see cref="MarkdownIt.render" /> but for single paragraph content. Result
     /// will NOT be wrapped into <c>&lt;p&gt;</c> tags.

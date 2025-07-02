@@ -15,7 +15,7 @@ printfn "%s" result2
 // full options list (defaults)
 let md =
     markdownit.Invoke(
-        MarkdownIt.Options(
+        Options(
             // Enable HTML tags in source
             html = false,
 
@@ -55,21 +55,21 @@ let result3 = md.render ("# markdown-it rulezz!")
 printfn "%s" result3
 
 let plugin1 =
-    MarkdownIt.PluginSimple(fun md ->
+    PluginSimple(fun md ->
         // Example plugin that does nothing
         // You can add your own logic here
         ()
     )
 
 let plugin2 =
-    MarkdownIt.PluginWithParams(fun md args ->
+    PluginWithParams(fun md args ->
         // Example plugin that does nothing with parameters
         // You can add your own logic here
         printfn "Plugin with params called with %A" args
     )
 
 let plugin3 =
-    MarkdownIt.PluginWithOptions(fun md options ->
+    PluginWithOptions(fun md options ->
         // Example plugin that does nothing with options
         // You can add your own logic here
         match options with

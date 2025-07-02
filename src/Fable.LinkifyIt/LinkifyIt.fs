@@ -106,7 +106,7 @@ type LinkifyIt =
     /// Returns array of found link descriptions or <c>null</c> on fail. We strongly
     /// recommend to use <see cref="LinkifyIt.test" /> first, for best speed.
     /// </summary>
-    abstract ``match``: text: string -> ResizeArray<Match> option
+    abstract ``match``: text: string -> array<Match> option
     /// Returns fully-formed (not fuzzy) link if it starts at the beginning
     /// of the string, and null otherwise.
     abstract matchAtStart: text: string -> Match option
@@ -123,7 +123,7 @@ type LinkifyIt =
     /// </summary>
     /// <param name="list">list of tlds</param>
     /// <param name="keepOld">merge with current list if <c>true</c> (<c>false</c> by default)</param>
-    abstract tlds: list: U2<string, ResizeArray<string>> * ?keepOld: bool -> LinkifyIt
+    abstract tlds: list: U2<string, array<string>> * ?keepOld: bool -> LinkifyIt
     /// Default normalizer (if schema does not define it's own).
     abstract normalize: ``match``: Match -> unit
     /// Override to modify basic RegExp-s.
