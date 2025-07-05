@@ -513,8 +513,6 @@ type StateInlineStatic =
     [<EmitConstructor>]
     abstract Create: src: string * md: MarkdownIt * env: obj option * outTokens: array<Token> -> StateInline
 
-type StateInline_ = StateInline
-
 [<AllowNullLiteral>]
 type Core =
     /// <summary><see cref="Ruler" /> instance. Keep configuration of core rules.</summary>
@@ -784,13 +782,9 @@ module MarkdownIt =
         type TokenMeta =
             abstract delimiters: array<Delimiter> with get, set
 
-    type Core = Core_
-
     module Core =
 
         type RuleCore = delegate of state: StateCore -> unit
-
-    type ParserBlock = ParserBlock_
 
     module ParserBlock =
 
